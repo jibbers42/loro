@@ -144,6 +144,67 @@ fn perf_diff_and_checkout_large_insert() {
     }
 }
 
+/// A big delete (select all, delete), a big insert inside another one, and a
+/// big insert made concurrently with another peer's edit.
+#[test]
+#[ignore]
+fn perf_large_delete_nested_and_concurrent_insert() {
+    for n in sizes() {
+        let doc = LoroDoc::new();
+        doc.set_peer_id(1).unwrap();
+        let mut undo = UndoManager::new(&doc);
+        undo.set_merge_interval(0);
+        let text = doc.get_text("note");
+        let big = gen_text(n);
+        text.insert(0, &big).unwrap();
+        doc.commit();
+        // A second big insert in the middle of the first.
+        text.insert(n / 2, &big).unwrap();
+        doc.commit();
+        let full = text.to_string();
+        let before_delete = doc.oplog_frontiers();
+        text.delete(0, text.len_unicode()).unwrap();
+        doc.commit();
+        let after_delete = doc.oplog_frontiers();
+
+        let s = Instant::now();
+        assert!(undo.undo().unwrap());
+        let undo_delete_ms = ms(s);
+        assert_eq!(text.to_string(), full);
+        let s = Instant::now();
+        assert!(undo.undo().unwrap());
+        let undo_nested_ms = ms(s);
+        assert_eq!(text.to_string(), big);
+        let s = Instant::now();
+        assert!(undo.redo().unwrap());
+        assert!(undo.redo().unwrap());
+        let redo_both_ms = ms(s);
+        assert_eq!(text.len_unicode(), 0);
+        let s = Instant::now();
+        doc.checkout(&before_delete).unwrap();
+        doc.checkout(&after_delete).unwrap();
+        doc.checkout_to_latest();
+        let checkouts_ms = ms(s);
+
+        // Peer 2 edits concurrently, then receives everything from peer 1.
+        let other = LoroDoc::new();
+        other.set_peer_id(2).unwrap();
+        other.get_text("note").insert(0, "concurrent ").unwrap();
+        other.commit();
+        let updates = doc.export(ExportMode::all_updates()).unwrap();
+        let s = Instant::now();
+        other.import(&updates).unwrap();
+        let concurrent_import_ms = ms(s);
+        doc.import(&other.export(ExportMode::all_updates()).unwrap())
+            .unwrap();
+        assert_eq!(text.to_string(), other.get_text("note").to_string());
+
+        println!(
+            "two inserts of {n} B, one inside the other, then delete all: undo the delete {undo_delete_ms:.1} ms, undo the inner insert {undo_nested_ms:.1} ms, redo both {redo_both_ms:.1} ms, three checkouts across the delete {checkouts_ms:.1} ms, import into a doc with a concurrent edit {concurrent_import_ms:.1} ms"
+        );
+    }
+}
+
 /// `count` updates of `piece` bytes each, one per commit, from one peer.
 fn updates(piece: usize, count: usize) -> (LoroDoc, Vec<Vec<u8>>) {
     let doc = LoroDoc::new();
