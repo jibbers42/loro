@@ -1,4 +1,4 @@
-# PR draft: branch `pr/windows-wasm-build` → loro-dev/loro `main`
+# PR draft: branch `fix/wasm-build-on-windows` (pushed to the fork) → loro-dev/loro `main`
 
 **Title:** build: let the wasm package build on Windows
 

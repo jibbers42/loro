@@ -18,14 +18,14 @@ What `main` still lacks is below.
 
 Each is one commit on `upstream/main` (62fb36f9). They touch different
 files (the two that edit `AGENTS.md` do so in different places) and merge in
-any order; `pr/review-integration` is a local merge of all three used for
-testing.
+any order. They were pushed to the fork on 2026-11-12; no issue or pull
+request has been opened.
 
 | Branch | Commit | Pull request | Changeset |
 |---|---|---|---|
-| `pr/cached-change-blocks` | `e3e54166` | [2-pr-cached-change-blocks.md](2-pr-cached-change-blocks.md), after the issue [1-issue-commit-after-snapshot.md](1-issue-commit-after-snapshot.md) | `.changeset/commit-export-cached-blocks.md`, `loro-crdt` patch |
-| `pr/windows-wasm-build` | `4b3c9337` | [3-pr-windows-wasm-build.md](3-pr-windows-wasm-build.md) | none (published package unchanged) |
-| `pr/large-text-tests` | `24f4c779` | [4-pr-large-text-tests.md](4-pr-large-text-tests.md) | none (tests and docs) |
+| `perf/commit-export-cached-blocks` | `e3e54166` | [2-pr-cached-change-blocks.md](2-pr-cached-change-blocks.md), after the issue [1-issue-commit-after-snapshot.md](1-issue-commit-after-snapshot.md) | `.changeset/commit-export-cached-blocks.md`, `loro-crdt` patch |
+| `fix/wasm-build-on-windows` | `4b3c9337` | [3-pr-windows-wasm-build.md](3-pr-windows-wasm-build.md) | none (published package unchanged) |
+| `test/large-text-fragments` | `ff70e9f2` | [4-pr-large-text-tests.md](4-pr-large-text-tests.md) | none (tests and docs) |
 
 Why not stacked: stacking helps when a later change needs an earlier one.
 None of these does, and independent pull requests can be reviewed and merged

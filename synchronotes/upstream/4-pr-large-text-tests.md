@@ -1,4 +1,4 @@
-# PR draft: branch `pr/large-text-tests` → loro-dev/loro `main`
+# PR draft: branch `test/large-text-fragments` (pushed to the fork) → loro-dev/loro `main`
 
 **Title:** test: cover text ops longer than one tracker fragment
 
