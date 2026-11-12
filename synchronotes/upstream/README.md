@@ -25,13 +25,13 @@ testing.
 |---|---|---|---|
 | `pr/cached-change-blocks` | `e3e54166` | [2-pr-cached-change-blocks.md](2-pr-cached-change-blocks.md), after the issue [1-issue-commit-after-snapshot.md](1-issue-commit-after-snapshot.md) | `.changeset/commit-export-cached-blocks.md`, `loro-crdt` patch |
 | `pr/windows-wasm-build` | `4b3c9337` | [3-pr-windows-wasm-build.md](3-pr-windows-wasm-build.md) | none (published package unchanged) |
-| `pr/large-text-tests` | `9decb702` | [4-pr-large-text-tests.md](4-pr-large-text-tests.md) | none (tests and docs) |
+| `pr/large-text-tests` | `24f4c779` | [4-pr-large-text-tests.md](4-pr-large-text-tests.md) | none (tests and docs) |
 
 Why not stacked: stacking helps when a later change needs an earlier one.
 None of these does, and independent pull requests can be reviewed and merged
-separately. The tests PR is optional; upstream may consider its 9 s default
-test too slow, in which case the ignored timing file and the context article
-can go without it.
+separately. The tests PR is optional. Its default test takes about 3 s in a
+debug build; the existing suite spends about 395 s executing tests on this
+machine, with single files at 25 to 83 s.
 
 ## Order of actions when the owner says go
 
