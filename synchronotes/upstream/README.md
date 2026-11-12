@@ -18,8 +18,15 @@ What `main` still lacks is below.
 
 Each is one commit on `upstream/main` (62fb36f9). They touch different
 files (the two that edit `AGENTS.md` do so in different places) and merge in
-any order. They were pushed to the fork on 2026-11-12; no issue or pull
-request has been opened.
+any order. They were pushed to the fork on 2026-11-12 and opened as pull
+requests the same day, each describing its own problem (no separate issue):
+
+- https://github.com/loro-dev/loro/pull/1282 (`perf/commit-export-cached-blocks`)
+- https://github.com/loro-dev/loro/pull/1283 (`fix/wasm-build-on-windows`)
+- https://github.com/loro-dev/loro/pull/1284 (`test/large-text-fragments`)
+
+The numbered draft files below are the working drafts; the text actually
+posted is shorter and is on the pull requests.
 
 | Branch | Commit | Pull request | Changeset |
 |---|---|---|---|
