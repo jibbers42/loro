@@ -167,6 +167,46 @@ struct ChangeStoreInner {
     may_have_unparsed_bodies: bool,
 }
 
+impl ChangeStoreInner {
+    /// Whether the cached blocks hold every op of one peer from `start` to `end`.
+    ///
+    /// Blocks of a peer never overlap, and a cached block is the current version of
+    /// the block with its key, so a gapless run of cached blocks over the range
+    /// leaves nothing for the encoded store to add.
+    fn caches_range(&self, start: Bound<ID>, end: Bound<ID>) -> bool {
+        let Bound::Included(start) = start else {
+            return false;
+        };
+        let last = match end {
+            Bound::Included(id) => id,
+            Bound::Excluded(id) if id.counter > 0 => ID::new(id.peer, id.counter - 1),
+            _ => return false,
+        };
+        if last.peer != start.peer || last.counter < start.counter {
+            return false;
+        }
+
+        let Some((first_id, first)) = self.mem_parsed_kv.range(..=start).next_back() else {
+            return false;
+        };
+        if first.peer != start.peer || first.counter_range.1 <= start.counter {
+            return false;
+        }
+
+        let mut cached_until = first.counter_range.1;
+        for (_, block) in self
+            .mem_parsed_kv
+            .range((Bound::Excluded(*first_id), Bound::Included(last)))
+        {
+            if block.counter_range.0 != cached_until {
+                return false;
+            }
+            cached_until = block.counter_range.1;
+        }
+        cached_until > last.counter
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct ChangeStoreRollback {
     old_vv: Arc<VersionVector>,
@@ -1880,6 +1920,14 @@ mod mut_inner_kv {
             end: Bound<ID>,
             stop_on_error: bool,
         ) -> LoroResult<()> {
+            // Blocks that are already cached need no lookup in the encoded store. A
+            // scan there decodes the blocks it starts and ends in, megabytes for a
+            // big text, and every local commit with a local-update subscriber asks
+            // for the change it has just made (context/commit-export-after-snapshot.md).
+            if self.inner.lock().caches_range(start, end) {
+                return Ok(());
+            }
+
             let mut whether_need_scan_backward = match start {
                 Bound::Included(id) => Some(id),
                 Bound::Excluded(id) => Some(id.inc(1)),

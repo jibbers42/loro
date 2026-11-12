@@ -27,6 +27,8 @@ over graceful degradation.
   changes, version vectors/frontiers, shallow roots, and history traversal.
   `ChangeStore` is also read without the op log lock, so keep its lock order:
   [../../context/arena-parent-links.md](../../context/arena-parent-links.md).
+  Cached blocks are served without asking the encoded store:
+  [../../context/commit-export-after-snapshot.md](../../context/commit-export-after-snapshot.md).
 - `src/arena.rs`: container IDs, indices, and parent links. How a parent is
   found in a lazily loaded document, and the locking rules:
   [../../context/arena-parent-links.md](../../context/arena-parent-links.md).
