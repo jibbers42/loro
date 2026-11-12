@@ -5,6 +5,15 @@ https://github.com/jibbers42/loro of loro-dev/loro). Branch:
 `synchronotes/fix-quadratic-diff`, local only, nothing pushed, nothing posted
 upstream. Machine: Windows 11, 12 logical cores, rustc 1.99.1, Node 24.22.1.
 
+> **Update, 2026-11-12.** Upstream merged PR #1082 (the coalescing fix) the
+> day after this was written, so both large-text fixes are now on
+> `upstream/main`. What remains ours was rebased onto `main`, reviewed,
+> retested and split into three local branches ready for pull requests; see
+> [upstream/README.md](upstream/README.md). On `main` the snapshot keystroke
+> cost only appears once history exceeds the 4 MiB block cache (5 MB insert:
+> 5.5 ms per keystroke, 0.006 ms with the fix). Everything below describes
+> the 1.17.1-based branch and is unchanged.
+
 ## Result
 
 Undo, redo, version diff, checkout and batch import of large text are now
