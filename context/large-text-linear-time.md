@@ -33,8 +33,10 @@ That is (L/256)² fragment rewrites per checkout across the op. Everything
 that checks out the tracker pays it: `checkout`, `diff`, `fork_at`, undo and
 redo (two checkouts each), re-attaching, and an import that the diff
 calculator has to replay (`import_batch` always, a plain import when there is
-concurrency). Measured on 1.17.1: undo of one 1 MB insert 66 s, `import_batch`
-of eight 100 KB updates 6.8 s against 1.5 ms one by one.
+concurrency). Measured on 1.17.1 (release build, idle machine): undo of one
+1 MB insert 18.7 s, `import_batch` of eight 100 KB updates 5.4 s against
+1.1 ms one by one. With the two changes below: 4.9 ms and 1.6 ms, and 26 ms
+to undo a 5 MB insert.
 
 ## What keeps it linear
 
